@@ -1,0 +1,68 @@
+﻿@page "/"
+@using BlazorWindowResize.Models
+@using BlazorWindowResize.Interfaces
+
+@inject IBrowserService BrowserService
+
+<PageTitle>Blazor Browser Get Size & Resize Event Example</PageTitle>
+
+<h1>Blazor Browser Get Size & Resize Event Example</h1>
+
+A very simple and lightweight example to show how the JavaScript Interop can be used to get the initial size of the browser and then to be notified in any page/component when the browser size changes.
+<p></p>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th></th>
+        <th>Width</th>
+        <th>Height</th>
+    </tr>
+    </thead>
+    <tbody>
+    @if (_dimensions != null)
+    {
+        <tr>
+            <th>On initialized</th>
+            <td>@_dimensions.Width</td>
+            <td>@_dimensions.Height</td>
+        </tr>
+    }
+    @if (_eventDimensions != null)
+    {
+        <tr>
+            <th>From Event</th>
+            <td>@_eventDimensions.Width</td>
+            <td>@_eventDimensions.Height</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code
+{
+    private BrowserDimensions? _dimensions = null;
+    private BrowserDimensions? _eventDimensions = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        BrowserService.OnDimensionsChanged += OnDimensionsChanged;
+        await GetDimensions();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task GetDimensions()
+    {
+        _dimensions = await BrowserService.GetDimensions();
+    }
+
+    private void OnDimensionsChanged(BrowserDimensions dimensions)
+    {
+        _eventDimensions = dimensions;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        BrowserService.OnDimensionsChanged -= OnDimensionsChanged;
+    }
+}
