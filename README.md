@@ -23,6 +23,14 @@ await host.Services.GetRequiredService<IBrowserService>().Init();
 await host.RunAsync();
 ```
 
+### Add the JavaScript to the web page
+
+Update index.html (or any other page you are using) to add
+
+```html
+    <script src="browser-service.js"></script>
+```
+
 ## Usage
 
 ### Get the current browser windows size
